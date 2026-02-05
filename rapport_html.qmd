@@ -1,0 +1,176 @@
+---
+subtitle: "Suivi pharma - V 1.0"
+---
+
+::: {.panel-tabset}
+
+# Introduction
+
+**Suivii des erreurs de préparation des commandes en pharmacie.**
+
+Base de données avec suivi<br>
+
+::: {.callout-tip collapse="true"}
+## Auteurs
+
+**Investigateur Coordonnateur** :   Samiya OUAFI
+<br>
+Pharmacie - Hôpital NOVO (Site de Pontoise)
+
+**Statisticien** : Philippe MICHEL
+:::
+
+```{r filename="Setup"}
+#| label: setup
+
+rm(list = ls())
+#
+library(corrplot)
+library(readODS)
+library(baseph)
+library(GGally)
+library(ggsci)
+library(ggstats)
+library(tidyverse)
+library(scales)
+library(plotly)
+library(kableExtra)
+library(gtsummary)
+library(DataExplorer)
+library(colorspace)
+library(forestmodel)
+library(janitor)
+library(fmsb)
+library(labelled)
+#
+classeur <- "pharma.ods"
+expx <- FALSE
+if (expx) {
+  file.create(classeur)
+  file.remove(classeur)
+  write_ods(iris, classeur)
+}
+
+# sessionInfo()
+theme_gtsummary_language(language = "fr", decimal.mark = ",")
+# theme_gtsummary_journal(journal = "jama")
+options(OutDec = ",")
+ptest <- list(all_continuous() ~ "wilcox.test", all_categorical() ~ "chisq.test")
+#
+# load("data/xxx.RData")
+```
+
+```{r filename="Import"}
+#| label: import
+
+tt <- read_ods("datas/caissecontrole.ods", sheet = "data") |>
+  clean_names() |>
+  mutate(across(is.character, ~ as_factor(.x))) |> 
+  mutate(date = mdy(date))
+
+bn <- read_ods("datas/caissecontrole.ods", sheet = "bnom")
+var_label(tt) <- bn$titre
+
+```
+
+
+```{r filename="Macro de mise en forme des tableaux en html"}
+#| label: macro-table
+
+tabph <- function(df, pp) {
+  zz <- df |>
+    bold_labels() |>
+    modify_header(label = " ")
+  if (pp) {
+    zz <- zz |>
+      add_p() |>
+      bold_p(t = 0.05)
+  }
+  zz |>
+    as_kable_extra() |>
+    kable_styling(c("striped", "hover")) |>
+    scroll_box(width = "100%", height = "700px")
+}
+```
+
+# Description 
+
+
+
+```{r filename="Description démographique (tableau)"}
+#| label: tbl-demog
+#| tbl-cap: Description globale
+#| 
+tt |>
+  dplyr::select(conforme:erreur_galenique) |>
+  tbl_summary(missing = "no",
+              value = list(conforme = "Oui",
+                           presence_frigo = "Oui",
+                           erreur_identification = "Oui",
+                           abcence_paraphe = "Oui",
+                           robot = "Oui",
+                           hors_robot = "Oui",
+                           frigo = "Oui",
+                           solute = "Oui",
+                           absence_bon = "Oui",
+                           absence_paraphe = "Oui",
+                           spe_non_commandee = "Oui",
+                           absence_spe_commandee = "Oui",
+                           qt_facturee_plus_qt_dispensee = "Oui",
+                           qt_facturee_moins_qt_dispensee = "Oui",
+                           erreur_dosage = "Oui")) |>
+  add_n() |>
+  tabph(pp = FALSE)
+```
+
+## Conformité globale
+
+On considère comme *conforme* une préparation qui ne présente aucune des erreurs listée dans le tableau.
+
+```{r}
+#| label: conform
+
+erreur <- tt |> 
+  dplyr::select(erreur_identification : erreur_galenique) |> 
+  mutate(across(everything(), ~ ifelse(.x == "Oui",1, 0))) |> 
+   rowwise() |>
+  mutate(nb_erreur = sum(c_across(everything()))) |>
+  mutate(conforme = as.factor(ifelse(nb_erreur == 0, "Oui", "Non"))) |> 
+  mutate(nb_erreur = as.factor(nb_erreur)) |> 
+  ungroup()
+  
+```
+
+```{r}
+#| label: tbl-conform1
+#| tbl-cap: Conformité calculée à partir du nombre d'erreurs
+
+erreur |>
+  dplyr::select(nb_erreur,conforme) |>
+  tbl_summary(missing = "no",
+              value = list(conforme = "Oui")) |>
+  add_n() |>
+  tabph(pp = FALSE)
+```
+
+## Erreurs fréquentes
+
+```{r}
+#| label: tbl-erfq
+#| tbl-cap: Erreurs fréquentes
+
+ner <- erreur |>
+  dplyr::select(-nb_erreur, -conforme) |>
+pivot_longer(cols = everything(), names_to = "erreur", values_to = "presence") |>
+  group_by(erreur) |>
+  
+  summarise(n = sum(presence == 1)) |>
+  arrange(desc(n)) 
+
+ner |> 
+  kbl() |> 
+    kable_material(c("striped", "hover", "responsive"))
+```
+
+
+:::
