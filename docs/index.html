@@ -108,6 +108,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+<link href="site_libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+<script src="site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.12.0/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<script src="site_libs/jquery-3.5.1/jquery.min.js"></script>
+<link href="site_libs/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+<script src="site_libs/crosstalk-1.2.2/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css" rel="stylesheet">
+<script src="site_libs/plotly-main-2.25.2/plotly-latest.min.js"></script>
 
 
 <meta property="og:title" content="Suivi Pharma">
@@ -398,26 +407,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Introduction</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Description</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Introduction</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Description</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Nombre de cas à prévoir</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<p><strong>Suivii des erreurs de préparation des commandes en pharmacie.</strong></p>
+<p><strong>Suivi des erreurs de préparation des commandes en pharmacie.</strong></p>
 <p>Base de données avec suivi<br></p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 <span class="screen-reader-only">Astuce</span>Auteurs
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>Investigateur Coordonnateur</strong> : Samiya OUAFI <br> Pharmacie - Hôpital NOVO (Site de Pontoise)</p>
 <p><strong>Statisticien</strong> : Philippe MICHEL</p>
-</div>
 </div>
 </div>
 <div class="cell">
@@ -429,7 +435,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiDisplay)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readODS)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(baseph)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
@@ -681,13 +687,16 @@ Table&nbsp;1: Description globale
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>erreur <span class="ot">&lt;-</span> tt <span class="sc">|&gt;</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(erreur_identification <span class="sc">:</span> erreur_galenique) <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(erreur_identification <span class="sc">:</span> absence_paraphe, spe_non_commandee<span class="sc">:</span>erreur_galenique) <span class="sc">|&gt;</span> </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">ifelse</span>(.x <span class="sc">==</span> <span class="st">"Oui"</span>,<span class="dv">1</span>, <span class="dv">0</span>))) <span class="sc">|&gt;</span> </span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nb_erreur =</span> <span class="fu">sum</span>(<span class="fu">c_across</span>(<span class="fu">everything</span>()))) <span class="sc">|&gt;</span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">conforme =</span> <span class="fu">as.factor</span>(<span class="fu">ifelse</span>(nb_erreur <span class="sc">==</span> <span class="dv">0</span>, <span class="st">"Oui"</span>, <span class="st">"Non"</span>))) <span class="sc">|&gt;</span> </span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nb_erreur =</span> <span class="fu">as.factor</span>(nb_erreur)) <span class="sc">|&gt;</span> </span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nb_erreur =</span> <span class="fu">fct_relevel</span>(nb_erreur,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0"</span>, <span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span> </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
@@ -723,36 +732,31 @@ Table&nbsp;2: Conformité calculée à partir du nombre d’erreurs
 <td style="text-align: center;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">1</td>
-<td style="text-align: center;"></td>
-<td style="text-align: center;">15 (8,7%)</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">2</td>
-<td style="text-align: center;"></td>
-<td style="text-align: center;">27 (16%)</td>
-</tr>
-<tr class="even">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">0</td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;">120 (70%)</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">5</td>
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">1</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">41 (24%)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">2</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">9 (5,2%)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">3</td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;">1 (0,6%)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; padding-left: 2em;" data-indentlevel="1">3</td>
-<td style="text-align: center;"></td>
-<td style="text-align: center;">8 (4,7%)</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left; padding-left: 2em;" data-indentlevel="1">4</td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;">1 (0,6%)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><span style=" font-weight: bold;    ">conforme</span></td>
 <td style="text-align: center;">172</td>
 <td style="text-align: center;">120 (70%)</td>
@@ -810,47 +814,31 @@ Table&nbsp;3: Erreurs fréquentes
 <td style="text-align: right;">16</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">hors_robot</td>
-<td style="text-align: right;">16</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">qt_facturee_moins_qt_dispensee</td>
 <td style="text-align: right;">14</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">qt_facturee_plus_qt_dispensee</td>
 <td style="text-align: right;">14</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">solute</td>
-<td style="text-align: right;">13</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">absence_paraphe</td>
 <td style="text-align: right;">12</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">robot</td>
-<td style="text-align: right;">6</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">spe_non_commandee</td>
 <td style="text-align: right;">5</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">absence_bon</td>
 <td style="text-align: right;">2</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">erreur_identification</td>
 <td style="text-align: right;">2</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">erreur_dosage</td>
-<td style="text-align: right;">1</td>
-</tr>
 <tr class="even">
-<td style="text-align: left;">frigo</td>
+<td style="text-align: left;">erreur_dosage</td>
 <td style="text-align: right;">1</td>
 </tr>
 <tr class="odd">
@@ -864,7 +852,43 @@ Table&nbsp;3: Erreurs fréquentes
 </figure>
 </div>
 </div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>zz <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ner, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">fct_reorder</span>(erreur, n), <span class="at">y =</span> n)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Type d'erreur"</span>, <span class="at">y =</span> <span class="st">"Nombre de cas"</span>) <span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>plotly<span class="sc">::</span><span class="fu">ggplotly</span>(zz)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="fig-erfq" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-erfq-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-e528e20cda09db3ebeb9" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-e528e20cda09db3ebeb9">{"x":{"data":[{"orientation":"h","width":[0.89999999999999858,0.90000000000000036,0.89999999999999947,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000036,0.90000000000000013,0.89999999999999991],"base":[0,0,0,0,0,0,0,0,0],"x":[16,14,14,12,5,2,2,1,0],"y":[9,7,8,6,5,3,4,2,1],"text":["fct_reorder(erreur, n): absence_spe_commandee<br />n: 16","fct_reorder(erreur, n): qt_facturee_moins_qt_dispensee<br />n: 14","fct_reorder(erreur, n): qt_facturee_plus_qt_dispensee<br />n: 14","fct_reorder(erreur, n): absence_paraphe<br />n: 12","fct_reorder(erreur, n): spe_non_commandee<br />n:  5","fct_reorder(erreur, n): absence_bon<br />n:  2","fct_reorder(erreur, n): erreur_identification<br />n:  2","fct_reorder(erreur, n): erreur_dosage<br />n:  1","fct_reorder(erreur, n): erreur_galenique<br />n:  0"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(70,130,180,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":23.305936073059364,"r":7.3059360730593621,"b":37.260273972602747,"l":200.91324200913246},"paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.80000000000000004,16.800000000000001],"tickmode":"array","ticktext":["0","5","10","15"],"tickvals":[0,5,10,15],"categoryorder":"array","categoryarray":["0","5","10","15"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Nombre de cas","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,9.5999999999999996],"tickmode":"array","ticktext":["erreur_galenique","erreur_dosage","absence_bon","erreur_identification","spe_non_commandee","absence_paraphe","qt_facturee_moins_qt_dispensee","qt_facturee_plus_qt_dispensee","absence_spe_commandee"],"tickvals":[1,2,3,4,5,6,6.9999999999999991,8,9],"categoryorder":"array","categoryarray":["erreur_galenique","erreur_dosage","absence_bon","erreur_identification","spe_non_commandee","absence_paraphe","qt_facturee_moins_qt_dispensee","qt_facturee_plus_qt_dispensee","absence_spe_commandee"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Type d'erreur","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"93155b69e6b5":{"x":{},"y":{},"type":"bar"}},"cur_data":"93155b69e6b5","visdat":{"93155b69e6b5":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-erfq-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Erreurs fréquentes
+</figcaption>
+</figure>
+</div>
+</div>
 </section>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>eav <span class="ot">&lt;-</span> <span class="fl">0.30</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>efin <span class="ot">&lt;-</span> <span class="fl">0.15</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>zz <span class="ot">&lt;-</span> <span class="fu">n.for.2p</span>(eav, efin, <span class="at">alpha =</span> <span class="fl">0.05</span>, <span class="at">power =</span> <span class="fl">0.90</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>nn <span class="ot">=</span> <span class="fu">round</span>(zz<span class="sc">$</span>n1<span class="sc">*</span><span class="fl">1.1</span>, <span class="dv">0</span>)</span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>On prévoit un risque alpha à 5 % &amp; une puissance à 90 %.</p>
+<p>Il y a dans l’échantillon actuel 30 % de préparations non conformes. Si on pense diminuer de moitié le taux d’erreur, pour avoir une différence visible &amp; significative il faudrait avoir dans chaque groupe (avant &amp; après) <strong>191 cas</strong>.</p>
 </div>
 </div>
 </div>

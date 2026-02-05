@@ -6,11 +6,11 @@ subtitle: "Suivi pharma - V 1.0"
 
 # Introduction
 
-**Suivii des erreurs de préparation des commandes en pharmacie.**
+**Suivi des erreurs de préparation des commandes en pharmacie.**
 
 Base de données avec suivi<br>
 
-::: {.callout-tip collapse="true"}
+::: {.callout-tip}
 ## Auteurs
 
 **Investigateur Coordonnateur** :   Samiya OUAFI
@@ -25,7 +25,7 @@ Pharmacie - Hôpital NOVO (Site de Pontoise)
 
 rm(list = ls())
 #
-library(corrplot)
+library(epiDisplay)
 library(readODS)
 library(baseph)
 library(GGally)
@@ -131,12 +131,15 @@ On considère comme *conforme* une préparation qui ne présente aucune des erre
 #| label: conform
 
 erreur <- tt |> 
-  dplyr::select(erreur_identification : erreur_galenique) |> 
+  dplyr::select(erreur_identification : absence_paraphe, spe_non_commandee:erreur_galenique) |> 
   mutate(across(everything(), ~ ifelse(.x == "Oui",1, 0))) |> 
    rowwise() |>
   mutate(nb_erreur = sum(c_across(everything()))) |>
   mutate(conforme = as.factor(ifelse(nb_erreur == 0, "Oui", "Non"))) |> 
   mutate(nb_erreur = as.factor(nb_erreur)) |> 
+  mutate(nb_erreur = fct_relevel(nb_erreur,
+    "0", "1", "2", "3", "4"
+  )) |> 
   ungroup()
   
 ```
@@ -171,6 +174,33 @@ ner |>
   kbl() |> 
     kable_material(c("striped", "hover", "responsive"))
 ```
+
+```{r}
+#| label: fig-erfq
+#| fig-cap: Erreurs fréquentes
+
+zz <- ggplot(ner, aes(x = fct_reorder(erreur, n), y = n)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(x = "Type d'erreur", y = "Nombre de cas") +
+  theme_minimal()
+
+plotly::ggplotly(zz)
+```
+
+
+# Nombre de cas à prévoir
+
+```{r}
+eav <- 0.30
+efin <- 0.15
+zz <- n.for.2p(eav, efin, alpha = 0.05, power = 0.90)
+nn = round(zz$n1*1.1, 0)
+```
+
+On prévoit un risque alpha à 5 % & une puissance à 90 %.
+
+Il y a dans l'échantillon actuel 30 % de préparations non conformes. Si on pense diminuer de moitié le taux d'erreur, pour avoir une différence visible & significative il faudrait avoir dans chaque groupe (avant & après) **`r nn` cas**.
 
 
 :::
