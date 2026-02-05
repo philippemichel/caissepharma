@@ -45,9 +45,7 @@ format:
       page-layout: full
       highlight-style: ayu
       theme:
-        light:
-          - sandstone
-          - custom.scss
+        light: sandstone
         dark: cyborg
       fontsize: 1.2em
 toc: true

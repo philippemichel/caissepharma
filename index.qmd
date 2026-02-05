@@ -195,12 +195,16 @@ plotly::ggplotly(zz)
 eav <- 0.30
 efin <- 0.15
 zz <- n.for.2p(eav, efin, alpha = 0.05, power = 0.90)
-nn = round(zz$n1*1.1, 0)
+nn1 = round(zz$n1*1.1, 0)
+zz <- n.for.2p(eav, 0.2, alpha = 0.05, power = 0.90)
+nn2 = round(zz$n1*1.1, 0)
 ```
 
 On prévoit un risque alpha à 5 % & une puissance à 90 %.
 
-Il y a dans l'échantillon actuel 30 % de préparations non conformes. Si on pense diminuer de moitié le taux d'erreur, pour avoir une différence visible & significative il faudrait avoir dans chaque groupe (avant & après) **`r nn` cas**.
+Il y a dans l'échantillon actuel 30 % de préparations non conformes. Si on pense diminuer de moitié le taux d'erreur, pour avoir une différence visible & significative, il faudrait avoir dans chaque groupe (avant & après) **`r nn1` cas**.
+
+En étant plus pessimiste et n'arriver qu'à 20 % de préparations non conformes, il faudrait avoir **`r nn2` cas** dans chaque groupe.
 
 
 :::
